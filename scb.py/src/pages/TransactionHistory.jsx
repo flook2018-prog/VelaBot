@@ -1,168 +1,301 @@
-import React, { useState } from "react";import React, { useState } from "react";import React, { useState } from "react";import React, { useState } from "react";import React, { useState } from "react";
 
-import { FaHistory, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
-
-import { FaHistory, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaSearch, FaFilter, FaDownload } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaHistory, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaSearch, FaFilter } from "react-icons/fa";
 
 const mockTransactions = [
-
-  {import { FaHistory, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaSearch, FaFilter, FaDownload } from "react-icons/fa";
-
+  {
     id: 1,
-
-    date: "2025-09-17 10:00",const mockTransactions = [
-
+    date: "2025-09-17 10:00",
     recipient: "สมชาย ใจดี",
-
-    accountNo: "1234567890",  {import { FaHistory, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaSearch, FaFilter, FaDownload } from "react-icons/fa";import { FaHistory, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaClock, FaSearch, FaFilter, FaDownload } from "react-icons/fa";
-
+    accountNo: "1234567890",
     bank: "SCB",
-
-    amount: 5000,    id: 1,
-
+    amount: 5000,
     note: "ค่าเช่าบ้าน",
-
-    status: "success"    date: "2025-09-17 10:00",// Mock data for demonstration
-
+    status: "success"
   },
-
-  {    recipient: "สมชาย ใจดี",
-
+  {
     id: 2,
-
-    date: "2025-09-16 14:30",    accountNo: "1234567890",const mockTransactions = [
-
+    date: "2025-09-16 14:30",
     recipient: "พรทิพย์ สวยงาม",
-
-    accountNo: "9876543210",    bank: "SCB",
-
+    accountNo: "9876543210",
     bank: "KBank",
-
-    amount: 1200,    amount: 5000,  {
-
+    amount: 1200,
     note: "ค่าขนม",
-
-    status: "failed"    note: "ค่าเช่าบ้าน",
-
+    status: "failed"
+  },
+  {
+    id: 3,
+    date: "2025-09-15 09:15",
+    recipient: "วิชญ์ ชาญฉลาด",
+    accountNo: "5555666677",
+    bank: "BBL",
+    amount: 2500,
+    note: "ค่าอาหาร",
+    status: "pending"
   }
+];
 
-];    status: "success",    id: 1,// Mock data for demonstration// Mock data for demonstration
+const bankColors = {
+  "SCB": "text-purple-600 bg-purple-50",
+  "KBank": "text-green-600 bg-green-50",
+  "BBL": "text-blue-600 bg-blue-50",
+  "Krungsri": "text-yellow-600 bg-yellow-50",
+  "TTB": "text-indigo-600 bg-indigo-50"
+};
 
-
-
-export default function TransactionHistory({ onBack }) {    transactionId: "TXN1726565200000"
-
+export default function TransactionHistory({ onBack }) {
   const [transactions] = useState(mockTransactions);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  },    date: "2025-09-17 10:00",
+  const filteredTransactions = transactions.filter(tx => {
+    const matchesSearch = tx.recipient.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      tx.accountNo.includes(searchTerm) ||
+      tx.note.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || tx.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusIcon = (status) => {
-
-    switch (status) {  {
-
+    switch (status) {
       case "success":
-
-        return <FaCheckCircle className="text-green-600" />;    id: 2,    recipient: "สมชาย ใจดี",const mockTransactions = [const mockTransactions = [
-
+        return <FaCheckCircle className="text-green-600" />;
       case "failed":
-
-        return <FaTimesCircle className="text-red-600" />;    date: "2025-09-16 14:30",
-
+        return <FaTimesCircle className="text-red-600" />;
       case "pending":
-
-        return <FaClock className="text-yellow-600" />;    recipient: "พรทิพย์ สวยงาม",    accountNo: "1234567890",
-
+        return <FaClock className="text-yellow-600" />;
       default:
-
-        return null;    accountNo: "9876543210",
-
+        return null;
     }
+  };
 
-  };    bank: "KBank",    bank: "SCB",  {  {
-
-
-
-  return (    amount: 1200,
-
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-
-      <div className="bg-white shadow-sm border-b border-gray-100">    note: "ค่าขนม",    amount: 5000,
-
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-6xl mx-auto px-4 py-4">
-
-          <div className="flex items-center space-x-3">    status: "failed",
-
+          <div className="flex items-center space-x-3">
             <button
-
-              onClick={onBack}    transactionId: "TXN1726478600000"    note: "ค่าเช่าบ้าน",    id: 1,    id: 1,
-
+              onClick={onBack}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-
-            >  },
-
+            >
               <FaArrowLeft className="text-gray-600" />
-
-            </button>  {    status: "success",
-
+            </button>
             <FaHistory className="text-2xl text-blue-600" />
+            <h1 className="text-2xl font-bold text-blue-700">ประวัติธุรกรรม</h1>
+          </div>
+        </div>
+      </div>
 
-            <h1 className="text-2xl font-bold text-gray-800">ประวัติธุรกรรม</h1>    id: 3,
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* Search and Filter */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 flex flex-col md:flex-row gap-4 items-center">
+          <div className="flex-1 w-full">
+            <div className="relative">
+              <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="ค้นหาชื่อผู้รับ, เลขบัญชี, หรือหมายเหตุ..."
+                className="w-full pl-10 pr-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="md:w-48 w-full">
+            <div className="relative">
+              <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <select
+                className="w-full pl-10 pr-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white appearance-none"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">ทุกสถานะ</option>
+                <option value="success">สำเร็จ</option>
+                <option value="failed">ไม่สำเร็จ</option>
+                <option value="pending">รอดำเนินการ</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Transaction List */}
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          {filteredTransactions.length === 0 ? (
+            <div className="text-center py-16">
+              <FaHistory className="text-6xl text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">ไม่พบประวัติธุรกรรม</h3>
+              <p className="text-gray-500">ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-blue-50">
+              {filteredTransactions.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="p-6 hover:bg-blue-50 cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${bankColors[tx.bank] || 'bg-gray-100 text-gray-600'}`}>{getStatusIcon(tx.status)}</div>
+                      <div>
+                        <h3 className="font-semibold text-blue-800 text-lg">{tx.recipient}</h3>
+                        <div className="flex items-center space-x-4 text-sm text-blue-600 mt-1">
+                          <span className="font-mono">{tx.accountNo}</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${bankColors[tx.bank] || 'bg-gray-100 text-gray-600'}`}>{tx.bank}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-blue-800">{tx.amount.toLocaleString()} ฿</div>
+                      <div className="text-sm text-blue-500 mt-1">{tx.date}</div>
+                    </div>
+                  </div>
+                  {tx.note && (
+                    <div className="mt-3 text-sm text-blue-700 bg-blue-50 px-3 py-2 rounded-lg">
+                      {tx.note}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+            </div>
+
+          </div>              <FaArrowLeft className="text-gray-600" />
+
+          <div className="md:w-48 w-full">
+
+            <div className="relative">            </button>  {    status: "success",
+
+              <FaFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+
+              <select            <FaHistory className="text-2xl text-blue-600" />
+
+                className="w-full pl-10 pr-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white appearance-none"
+
+                value={statusFilter}            <h1 className="text-2xl font-bold text-gray-800">ประวัติธุรกรรม</h1>    id: 3,
+
+                onChange={(e) => setStatusFilter(e.target.value)}
+
+              >          </div>
+
+                <option value="all">ทุกสถานะ</option>
+
+                <option value="success">สำเร็จ</option>        </div>    date: "2025-09-15 09:15",    transactionId: "TXN1726565200000"    date: "2025-09-17 10:00",    date: "2025-09-17 10:00",
+
+                <option value="failed">ไม่สำเร็จ</option>
+
+                <option value="pending">รอดำเนินการ</option>      </div>
+
+              </select>
+
+            </div>    recipient: "วิชญ์ ชาญฉลาด",
 
           </div>
 
-        </div>    date: "2025-09-15 09:15",    transactionId: "TXN1726565200000"    date: "2025-09-17 10:00",    date: "2025-09-17 10:00",
+        </div>      <div className="max-w-6xl mx-auto px-4 py-8">
 
-      </div>
 
-    recipient: "วิชญ์ ชาญฉลาด",
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Transaction List */}        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">    accountNo: "5555666677",  },
 
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">    accountNo: "5555666677",  },
+        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-          <div className="divide-y divide-gray-100">
+          {filteredTransactions.length === 0 ? (          <div className="divide-y divide-gray-100">
 
-            {transactions.map((tx) => (    bank: "BBL",
+            <div className="text-center py-16">
 
-              <div key={tx.id} className="p-6 hover:bg-gray-50 transition-colors">
+              <FaHistory className="text-6xl text-gray-300 mx-auto mb-4" />            {transactions.map((tx) => (    bank: "BBL",
 
-                <div className="flex items-center justify-between">    amount: 2500,  {    recipient: "สมชาย ใจดี",    recipient: "สมชาย ใจดี",
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">ไม่พบประวัติธุรกรรม</h3>
 
-                  <div className="flex items-center space-x-4">
+              <p className="text-gray-500">ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</p>              <div key={tx.id} className="p-6 hover:bg-gray-50 transition-colors">
 
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-100">    note: "ค่าอาหาร",
+            </div>
 
-                      {getStatusIcon(tx.status)}
+          ) : (                <div className="flex items-center justify-between">    amount: 2500,  {    recipient: "สมชาย ใจดี",    recipient: "สมชาย ใจดี",
 
-                    </div>    status: "pending",    id: 2,
+            <div className="divide-y divide-blue-50">
 
-                    <div>
+              {filteredTransactions.map((tx) => (                  <div className="flex items-center space-x-4">
 
-                      <h3 className="font-semibold text-gray-800 text-lg">{tx.recipient}</h3>    transactionId: "TXN1726392900000"
+                <div
 
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                  key={tx.id}                    <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-100">    note: "ค่าอาหาร",
 
-                        <span className="font-mono">{tx.accountNo}</span>  },    date: "2025-09-16 14:30",    accountNo: "1234567890",    accountNo: "1234567890",
+                  className="p-6 hover:bg-blue-50 cursor-pointer transition-colors"
 
-                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">
+                >                      {getStatusIcon(tx.status)}
 
-                          {tx.bank}  {
+                  <div className="flex items-center justify-between">
 
-                        </span>
+                    <div className="flex items-center space-x-4">                    </div>    status: "pending",    id: 2,
 
-                      </div>    id: 4,    recipient: "พรทิพย์ สวยงาม",
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${bankColors[tx.bank] || 'bg-gray-100 text-gray-600'}`}>{getStatusIcon(tx.status)}</div>
+
+                      <div>                    <div>
+
+                        <h3 className="font-semibold text-blue-800 text-lg">{tx.recipient}</h3>
+
+                        <div className="flex items-center space-x-4 text-sm text-blue-600 mt-1">                      <h3 className="font-semibold text-gray-800 text-lg">{tx.recipient}</h3>    transactionId: "TXN1726392900000"
+
+                          <span className="font-mono">{tx.accountNo}</span>
+
+                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${bankColors[tx.bank] || 'bg-gray-100 text-gray-600'}`}>{tx.bank}</span>                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+
+                        </div>
+
+                      </div>                        <span className="font-mono">{tx.accountNo}</span>  },    date: "2025-09-16 14:30",    accountNo: "1234567890",    accountNo: "1234567890",
 
                     </div>
 
-                  </div>    date: "2025-09-14 16:45",
+                    <div className="text-right">                        <span className="px-2 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">
 
-                  <div className="text-right">
+                      <div className="text-2xl font-bold text-blue-800">{tx.amount.toLocaleString()} ฿</div>
 
-                    <div className="text-2xl font-bold text-gray-800">    recipient: "สุนิสา มีสุข",    accountNo: "9876543210",    bank: "SCB",    bank: "SCB",
+                      <div className="text-sm text-blue-500 mt-1">{tx.date}</div>                          {tx.bank}  {
 
-                      {tx.amount.toLocaleString()} ฿
+                    </div>
 
-                    </div>    accountNo: "1111222233",
+                  </div>                        </span>
+
+                  {tx.note && (
+
+                    <div className="mt-3 text-sm text-blue-700 bg-blue-50 px-3 py-2 rounded-lg">                      </div>    id: 4,    recipient: "พรทิพย์ สวยงาม",
+
+                      {tx.note}
+
+                    </div>                    </div>
+
+                  )}
+
+                </div>                  </div>    date: "2025-09-14 16:45",
+
+              ))}
+
+            </div>                  <div className="text-right">
+
+          )}
+
+        </div>                    <div className="text-2xl font-bold text-gray-800">    recipient: "สุนิสา มีสุข",    accountNo: "9876543210",    bank: "SCB",    bank: "SCB",
+
+      </div>
+
+    </div>                      {tx.amount.toLocaleString()} ฿
+
+  );
+
+}                    </div>    accountNo: "1111222233",
+
 
                     <div className="text-sm text-gray-500 mt-1">{tx.date}</div>
 
