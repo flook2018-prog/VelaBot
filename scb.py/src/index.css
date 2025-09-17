@@ -4,13 +4,17 @@ a {
 @tailwind utilities;
 a:hover {
   color: #535bf2;
-}
 
 body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
   min-height: 100vh;
 }
 
