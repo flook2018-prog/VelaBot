@@ -1,79 +1,102 @@
 
-import React, { useState } from "react";
+
 import { FaUser, FaLock } from "react-icons/fa";
 
 export default function Login({ onLogin }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
-  // กำหนดรหัสผ่านจริง (hardcode)
   const VALID_USER = "admin";
   const VALID_PASS = "1234";
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน");
-      return;
-    }
-    if (username === VALID_USER && password === VALID_PASS) {
-      setError("");
-      setLoggedIn(true);
-      onLogin(username);
-    } else {
-      setError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
-    }
+    setError("");
+    setLoading(true);
+    setTimeout(() => {
+      if (!username || !password) {
+        setError("กรุณากรอกชื่อผู้ใช้และรหัสผ่าน");
+        setLoading(false);
+        return;
+      }
+      if (username === VALID_USER && password === VALID_PASS) {
+        setLoggedIn(true);
+        setLoading(false);
+        onLogin(username);
+      } else {
+        setError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
+        setLoading(false);
+      }
+    }, 900);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0f2f5] to-[#ffe082] px-2">
-      {!loggedIn && (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-200 px-2">
+      <div className="w-full max-w-4xl bg-white/90 rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden border border-blue-100 animate-fadeIn">
+        {/* Illustration */}
+        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-100 to-blue-300 w-1/2 p-10">
+          <img src="/cash-payment.png" alt="Logo" className="w-24 h-24 mb-6 rounded-2xl shadow-xl border-4 border-white bg-white" />
+          <h2 className="text-3xl font-bold text-blue-700 mb-2 drop-shadow">VelaBot Banking</h2>
+          <p className="text-blue-600 text-lg text-center">ระบบโอนเงินออนไลน์ที่ปลอดภัยและน่าเชื่อถือ</p>
+        </div>
+        {/* Login Form */}
         <form
           onSubmit={handleSubmit}
-          className="login-box bg-white/90 rounded-[2.5rem] shadow-2xl p-16 pt-14 pb-12 min-w-[680px] max-w-[95vw] flex flex-col items-center relative animate-fadeIn border border-[#ffe082]/30"
-          style={{boxShadow: '0 12px 48px rgba(108,52,131,0.13), 0 2.5px 16px rgba(255,152,0,0.10)'}}
+          className="flex-1 flex flex-col justify-center items-center p-10 md:p-16"
           autoComplete="on"
         >
-          <img src="/cash-payment.png" alt="Logo" className="login-logo w-8 h-8 object-contain mb-4 rounded-2xl shadow-lg border-4 border-[#fffbe7] bg-[#fffbe7]" style={{boxShadow:'0 2px 8px rgba(108,52,131,0.10)'}} />
-          <h2 className="text-center text-[#6c3483] mb-8 text-[2.2em] tracking-wide w-full font-bold drop-shadow">เข้าสู่ระบบ</h2>
-          <div className="input-group w-full mb-7 flex flex-col items-center">
-            <label htmlFor="username" className="block mb-3 text-[#333] font-semibold tracking-wide w-[60%] min-w-[240px] max-w-[440px] mx-auto pl-1">ชื่อผู้ใช้</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              required
-              autoFocus
-              placeholder="กรอกชื่อผู้ใช้..."
-              className="block w-[60%] min-w-[240px] max-w-[440px] px-5 py-4 rounded-2xl border border-[#e0e0e0] bg-[#fafafa] text-lg focus:border-[#6c3483] focus:bg-[#fffbe7] transition mx-auto shadow-sm focus:shadow-lg outline-none"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
+          <img src="/cash-payment.png" alt="Logo" className="block md:hidden w-14 h-14 mb-4 rounded-2xl shadow-lg border-4 border-blue-50 bg-blue-50 mx-auto" />
+          <h2 className="text-center text-blue-700 mb-8 text-2xl font-bold tracking-wide w-full drop-shadow">เข้าสู่ระบบ</h2>
+          <div className="w-full max-w-xs mb-6">
+            <label htmlFor="username" className="block mb-2 text-gray-700 font-semibold">ชื่อผู้ใช้</label>
+            <div className="relative">
+              <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                autoFocus
+                placeholder="กรอกชื่อผู้ใช้..."
+                className="pl-10 pr-4 py-3 w-full rounded-xl border border-blue-100 bg-blue-50 text-lg focus:border-blue-400 focus:bg-white transition shadow-sm outline-none"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                disabled={loading}
+              />
+            </div>
           </div>
-          <div className="input-group w-full mb-7 flex flex-col items-center">
-            <label htmlFor="password" className="block mb-3 text-[#333] font-semibold tracking-wide w-[60%] min-w-[240px] max-w-[440px] mx-auto pl-1">รหัสผ่าน</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              placeholder="กรอกรหัสผ่าน..."
-              className="block w-[60%] min-w-[240px] max-w-[440px] px-5 py-4 rounded-2xl border border-[#e0e0e0] bg-[#fafafa] text-lg focus:border-[#6c3483] focus:bg-[#fffbe7] transition mx-auto shadow-sm focus:shadow-lg outline-none"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+          <div className="w-full max-w-xs mb-6">
+            <label htmlFor="password" className="block mb-2 text-gray-700 font-semibold">รหัสผ่าน</label>
+            <div className="relative">
+              <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                placeholder="กรอกรหัสผ่าน..."
+                className="pl-10 pr-4 py-3 w-full rounded-xl border border-blue-100 bg-blue-50 text-lg focus:border-blue-400 focus:bg-white transition shadow-sm outline-none"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                disabled={loading}
+              />
+            </div>
           </div>
-          {error && <div className="error w-full text-[#c0392b] text-center mb-5 bg-[#ffeaea] rounded-xl py-3 text-lg font-medium shadow">{error}</div>}
+          {error && <div className="w-full max-w-xs text-red-600 text-center mb-4 bg-red-50 rounded-lg py-2 text-base font-medium shadow">{error}</div>}
           <button
             type="submit"
-            className="w-[60%] min-w-[240px] max-w-[440px] bg-gradient-to-r from-[#6c3483] to-[#ff9800] text-white py-4 rounded-2xl font-bold shadow-lg hover:from-[#ff9800] hover:to-[#6c3483] transition text-[1.25em] mt-2 tracking-wide outline-none border-0 focus:ring-4 focus:ring-[#ffe082]/60"
+            className={`w-full max-w-xs bg-gradient-to-r from-blue-600 to-blue-500 text-white py-3 rounded-xl font-bold shadow-lg transition text-lg mt-2 tracking-wide outline-none border-0 focus:ring-4 focus:ring-blue-200/60 ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
             style={{letterSpacing:'1px'}}
-          >เข้าสู่ระบบ</button>
-          <div className="login-hint text-[#888] text-base text-center mt-6">สำหรับผู้ดูแลระบบเท่านั้น</div>
+            disabled={loading}
+          >
+            {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
+          </button>
+          <div className="text-gray-400 text-sm text-center mt-6">สำหรับผู้ดูแลระบบเท่านั้น</div>
         </form>
-      )}
+      </div>
     </div>
   );
 }

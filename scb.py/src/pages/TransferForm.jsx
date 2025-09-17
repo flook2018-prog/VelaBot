@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { FaMoneyBillTransfer, FaUser, FaUniversity, FaCheckCircle, FaExclamationTriangle, FaArrowLeft, FaShieldAlt } from "react-icons/fa";
 
@@ -19,8 +20,23 @@ export default function TransferForm({ user, onBack }) {
   const [status, setStatus] = useState(null);
   const [error, setError] = useState("");
   const [step, setStep] = useState(1); // 1: form, 2: confirm, 3: result
+  const [loading, setLoading] = useState(false);
 
   const selectedBank = banks.find(b => b.value === bank);
+
+  // Stepper UI
+  const Stepper = () => (
+    <div className="flex items-center justify-center mb-8">
+      {[1,2,3].map((s, i) => (
+        <React.Fragment key={s}>
+          <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold text-lg border-2 ${step === s ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-blue-600 border-blue-200'} transition-all`}>
+            {s}
+          </div>
+          {i < 2 && <div className={`w-10 h-1 ${step > s ? 'bg-blue-600' : 'bg-blue-100'} mx-1 rounded transition-all`}></div>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,10 +54,11 @@ export default function TransferForm({ user, onBack }) {
 
   const confirmTransfer = () => {
     setStep(3);
-    // Mock transfer logic
+    setLoading(true);
     setTimeout(() => {
       setStatus({ success: true, message: "โอนเงินสำเร็จ", transactionId: "TXN" + Date.now() });
-    }, 2000);
+      setLoading(false);
+    }, 1800);
   };
 
   const resetForm = () => {
@@ -52,61 +69,64 @@ export default function TransferForm({ user, onBack }) {
     setNote("");
     setStatus(null);
     setError("");
+    setLoading(false);
   };
 
+  // Step 3: Result
   if (step === 3) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex items-center justify-center px-4">
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md text-center">
-          {status ? (
-            status.success ? (
-              <>
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaCheckCircle className="text-4xl text-green-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-green-600 mb-4">โอนเงินสำเร็จ!</h2>
-                <div className="bg-gray-50 rounded-xl p-4 mb-6">
-                  <p className="text-sm text-gray-600 mb-1">รหัสธุรกรรม</p>
-                  <p className="font-mono text-lg font-bold text-gray-800">{status.transactionId}</p>
-                </div>
-                <p className="text-gray-600 mb-6">โอนเงินจำนวน {parseFloat(amount).toLocaleString()} บาท ไปยัง {recipientName} เรียบร้อยแล้ว</p>
-                <button
-                  onClick={resetForm}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
-                >
-                  โอนเงินอีกครั้ง
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FaExclamationTriangle className="text-4xl text-red-600" />
-                </div>
-                <h2 className="text-2xl font-bold text-red-600 mb-4">โอนเงินไม่สำเร็จ</h2>
-                <p className="text-gray-600 mb-6">{status.message}</p>
-                <button
-                  onClick={() => setStep(1)}
-                  className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-xl font-semibold"
-                >
-                  ลองอีกครั้ง
-                </button>
-              </>
-            )
-          ) : (
+          <Stepper />
+          {loading ? (
             <>
-              <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-gray-600">กำลังดำเนินการโอนเงิน...</p>
+              <div className="animate-spin w-14 h-14 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+              <p className="text-blue-700 text-lg">กำลังดำเนินการโอนเงิน...</p>
             </>
-          )}
+          ) : status && status.success ? (
+            <>
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FaCheckCircle className="text-4xl text-green-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-green-600 mb-4">โอนเงินสำเร็จ!</h2>
+              <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                <p className="text-sm text-gray-600 mb-1">รหัสธุรกรรม</p>
+                <p className="font-mono text-lg font-bold text-gray-800">{status.transactionId}</p>
+              </div>
+              <p className="text-gray-600 mb-6">โอนเงินจำนวน {parseFloat(amount).toLocaleString()} บาท ไปยัง {recipientName} เรียบร้อยแล้ว</p>
+              <button
+                onClick={resetForm}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+              >
+                โอนเงินอีกครั้ง
+              </button>
+            </>
+          ) : status && !status.success ? (
+            <>
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FaExclamationTriangle className="text-4xl text-red-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-red-600 mb-4">โอนเงินไม่สำเร็จ</h2>
+              <p className="text-gray-600 mb-6">{status.message}</p>
+              <button
+                onClick={resetForm}
+                className="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-xl font-semibold"
+              >
+                ลองอีกครั้ง
+              </button>
+            </>
+          ) : null}
         </div>
       </div>
     );
   }
 
+  // Step 2: Confirm
   if (step === 2) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200 flex items-center justify-center px-4">
         <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg">
+          <Stepper />
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <FaCheckCircle className="text-2xl text-blue-600" />
@@ -160,6 +180,7 @@ export default function TransferForm({ user, onBack }) {
             <button
               onClick={confirmTransfer}
               className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+              disabled={loading}
             >
               ยืนยันโอนเงิน
             </button>
@@ -169,10 +190,11 @@ export default function TransferForm({ user, onBack }) {
     );
   }
 
+  // Step 1: Form
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-200">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-100">
+      <div className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center space-x-3">
             <button
@@ -182,45 +204,48 @@ export default function TransferForm({ user, onBack }) {
               <FaArrowLeft className="text-gray-600" />
             </button>
             <FaMoneyBillTransfer className="text-2xl text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-800">โอนเงิน</h1>
+            <h1 className="text-2xl font-bold text-blue-700">โอนเงิน</h1>
           </div>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-2xl p-8">
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-2xl p-10">
+          <Stepper />
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <FaMoneyBillTransfer className="text-2xl text-blue-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">โอนเงินอย่างปลอดภัย</h2>
-            <p className="text-gray-600">กรอกข้อมูลผู้รับเงินและจำนวนที่ต้องการโอน</p>
+            <h2 className="text-2xl font-bold text-blue-700 mb-2">โอนเงินอย่างปลอดภัย</h2>
+            <p className="text-blue-600">กรอกข้อมูลผู้รับเงินและจำนวนที่ต้องการโอน</p>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                <FaUser className="inline mr-2 text-gray-500" />
+              <label className="block text-blue-700 font-semibold mb-2">
+                <FaUser className="inline mr-2 text-blue-400" />
                 ชื่อผู้รับ
               </label>
               <input
                 type="text"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                className="w-full px-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white"
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
                 placeholder="กรอกชื่อผู้รับเงิน"
+                disabled={loading}
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
-                <FaUniversity className="inline mr-2 text-gray-500" />
+              <label className="block text-blue-700 font-semibold mb-2">
+                <FaUniversity className="inline mr-2 text-blue-400" />
                 ธนาคาร
               </label>
               <select
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white"
+                className="w-full px-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white"
                 value={bank}
                 onChange={(e) => setBank(e.target.value)}
+                disabled={loading}
               >
                 {banks.map((bankOption) => (
                   <option key={bankOption.value} value={bankOption.value}>
@@ -231,38 +256,41 @@ export default function TransferForm({ user, onBack }) {
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">เลขบัญชีผู้รับ</label>
+              <label className="block text-blue-700 font-semibold mb-2">เลขบัญชีผู้รับ</label>
               <input
                 type="text"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white font-mono"
+                className="w-full px-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white font-mono"
                 value={accountNo}
                 onChange={(e) => setAccountNo(e.target.value)}
                 placeholder="0000000000"
                 maxLength="15"
+                disabled={loading}
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">จำนวนเงิน (บาท)</label>
+              <label className="block text-blue-700 font-semibold mb-2">จำนวนเงิน (บาท)</label>
               <input
                 type="number"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white text-lg font-semibold"
+                className="w-full px-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white text-lg font-semibold"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
                 min="1"
                 step="0.01"
+                disabled={loading}
               />
             </div>
 
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">หมายเหตุ (ไม่บังคับ)</label>
+              <label className="block text-blue-700 font-semibold mb-2">หมายเหตุ (ไม่บังคับ)</label>
               <textarea
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-50 focus:bg-white resize-none"
+                className="w-full px-4 py-3 border border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-blue-50 focus:bg-white resize-none"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="ระบุหมายเหตุ (ถ้ามี)"
                 rows="3"
+                disabled={loading}
               />
             </div>
           </div>
@@ -277,7 +305,8 @@ export default function TransferForm({ user, onBack }) {
           <div className="mt-8">
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all"
+              className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+              disabled={loading}
             >
               ดำเนินการต่อ
             </button>
@@ -297,41 +326,4 @@ export default function TransferForm({ user, onBack }) {
 }
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
               value={bank}
-              onChange={(e) => setBank(e.target.value)}
-            >
-              {banks.map((b) => (
-                <option key={b.value} value={b.value}>{b.label}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block mb-1 text-gray-700">จำนวนเงิน (บาท)</label>
-            <input
-              type="number"
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              min="1"
-            />
-          </div>
-          <div>
-            <label className="block mb-1 text-gray-700">หมายเหตุ</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
-          </div>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
-          <button type="submit" className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition">โอนเงิน</button>
-        </form>
-        {status && (
-          <div className={`mt-6 text-center text-lg font-semibold ${status.success ? "text-green-600" : "text-red-600"}`}>
-            {status.message}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+
