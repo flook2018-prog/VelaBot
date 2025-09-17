@@ -33,7 +33,7 @@ export default function Login({ onLogin }) {
         style={{boxShadow: '0 12px 48px rgba(108,52,131,0.13), 0 2.5px 16px rgba(255,152,0,0.10)'}}
         autoComplete="on"
       >
-        <img src={require("../cash-payment.png")} alt="Logo" className="login-logo w-24 h-24 object-contain mb-4 rounded-3xl shadow-lg border-4 border-[#fffbe7] bg-[#fffbe7]" style={{boxShadow:'0 4px 16px rgba(108,52,131,0.10)'}} />
+  <img src="/cash-payment.png" alt="Logo" className="login-logo w-24 h-24 object-contain mb-4 rounded-3xl shadow-lg border-4 border-[#fffbe7] bg-[#fffbe7]" style={{boxShadow:'0 4px 16px rgba(108,52,131,0.10)'}} />
         <h2 className="text-center text-[#6c3483] mb-8 text-[2.2em] tracking-wide w-full font-bold drop-shadow">เข้าสู่ระบบ</h2>
         <div className="input-group w-full mb-7 flex flex-col items-center">
           <label htmlFor="username" className="block mb-3 text-[#333] font-semibold tracking-wide w-[60%] min-w-[240px] max-w-[440px] mx-auto pl-1">ชื่อผู้ใช้</label>
